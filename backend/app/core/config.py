@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     postgres_db: str = "agro_geo"
     postgres_user: str = "agro"
     postgres_password: str = "agro"
+    osrm_base_url: str = "http://osrm:5000"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

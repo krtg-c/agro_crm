@@ -26,7 +26,28 @@ services:
       - "8000:8000"
     depends_on:
       - postgres
+  osrm-prep:
+    image: osrm/osrm-backend:latest
+    container_name: agro_osrm_prep
+    working_dir: /data
+    volumes:
+      - ./osrm_data:/data
+      - ./osrm:/scripts:ro
+    command: ["sh", "-lc", "cp /scripts/prepare.sh /tmp/prepare.sh && sed -i 's/\r$//' /tmp/prepare.sh && sh /tmp/prepare.sh"]
+    restart: "no"
+
+  osrm:
+    image: osrm/osrm-backend:latest
+    container_name: agro_osrm
+    working_dir: /data
+    volumes:
+      - ./osrm_data:/data
+    ports:
+      - "5000:5000"
+    command: ["osrm-routed", "--algorithm", "ch", "/data/map.osrm"]
+    depends_on:
+      osrm-prep:
+        condition: service_completed_successfully
 
 volumes:
   agro_pg:
-
