@@ -1,0 +1,13 @@
+# OSRM data (huge)
+infra/osrm_data/
+**/*.osm.pbf
+**/*.osrm
+**/*.osrm.*
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Env files
+.env
