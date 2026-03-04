@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     postgres_user: str = "agro"
     postgres_password: str = "agro"
     osrm_base_url: str = "http://osrm:5000"
+    geocoder_base_url: str = "http://nominatim:8080"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

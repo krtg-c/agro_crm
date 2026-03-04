@@ -11,3 +11,9 @@ __pycache__/
 
 # Env files
 .env
+
+
+# NOMINATIM DATA
+infra/nominatim_data/*
+infra/nominatim_db/*
+infra/nominatim_import/*
