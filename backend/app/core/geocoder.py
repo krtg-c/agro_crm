@@ -7,7 +7,7 @@ class NominatimGeocoder:
 
     def geocode(self, query: str) -> tuple[float, float, str]:
         url = f"{self.base_url}/search"
-        params = {"q": query, "format": "json", "limit": 1}
+        params = {"q": query, "format": "json", "limit": 1, "countrycodes": "ru"}
         headers = {"User-Agent": "agro-geo-api"}
         r = requests.get(url, params=params, headers=headers, timeout=20)
         r.raise_for_status()
