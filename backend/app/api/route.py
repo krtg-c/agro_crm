@@ -6,7 +6,8 @@ from app.core.osrm_client import OSRMClient
 from app.core.geocoder import NominatimGeocoder
 from app.core.address_cache import get_cached_address, save_cached_address
 from app.core.routes_log import save_route_log
-from app.core.objects import get_burt_by_id, get_receiving_point_by_id
+from app.core.objects import get_burt_by_id, get_receiving_point_by_id, update_burt_coordinates,  update_receiving_point_coordinates
+
 
 router = APIRouter(prefix="/route", tags=["route"])
 
@@ -58,6 +59,7 @@ class RouteByObjectResponse(BaseModel):
     to_point: dict
     distance_km: float
     cost_rub: float
+    geometry: list[list[float]]
 
 def load_object_coordinates(object_type: str, object_id: int, geocoder: NominatimGeocoder):
     if object_type == "burt":
@@ -75,12 +77,27 @@ def load_object_coordinates(object_type: str, object_id: int, geocoder: Nominati
 
     cached = get_cached_address(obj.address)
     if cached:
-        return obj.address, cached.lat, cached.lon, cached.display_name or obj.name
+        lat = cached.lat
+        lon = cached.lon
+        print("UPDATING OBJECT FROM CACHE:", object_type, object_id, lat, lon)
+
+        if object_type == "burt":
+            update_burt_coordinates(object_id, lat, lon)
+        elif object_type == "receiving_point":
+            update_receiving_point_coordinates(object_id, lat, lon)
+
+        return obj.address, lat, lon, cached.display_name or obj.name
 
     lat, lon, display_name = geocoder.geocode(obj.address)
+    print("UPDATING OBJECT FROM GEOCODER:", object_type, object_id, lat, lon)
     save_cached_address(obj.address, lat, lon, display_name)
-    return obj.address, lat, lon, display_name
 
+    if object_type == "burt":
+        update_burt_coordinates(object_id, lat, lon)
+    elif object_type == "receiving_point":
+        update_receiving_point_coordinates(object_id, lat, lon)
+
+    return obj.address, lat, lon, display_name
 
 @router.post("", response_model=RouteResponse)
 def build_route(payload: RouteRequest):
@@ -173,7 +190,9 @@ def route_by_object(payload: RouteByObjectRequest):
             geocoder,
         )
 
-        distance_km = osrm.route_distance_km(f_lat, f_lon, t_lat, t_lon)
+        route_data = osrm.route_full(f_lat, f_lon, t_lat, t_lon)
+        distance_km = route_data["distance_km"]
+        geometry = route_data["geometry"]
 
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
@@ -208,4 +227,5 @@ def route_by_object(payload: RouteByObjectRequest):
         to_point={"lat": t_lat, "lon": t_lon},
         distance_km=distance_km,
         cost_rub=cost_rub,
+        geometry=geometry
     )

@@ -80,3 +80,22 @@ def list_receiving_points() -> list[ReceivingPoint]:
     with SessionLocal() as session:
         stmt = select(ReceivingPoint).order_by(ReceivingPoint.id)
         return list(session.execute(stmt).scalars().all())
+
+def update_burt_coordinates(object_id: int, lat: float, lon: float) -> None:
+    with SessionLocal() as session:
+        row = session.get(Burt, object_id)
+        if not row:
+            return
+        row.lat = lat
+        row.lon = lon
+        session.commit()
+
+
+def update_receiving_point_coordinates(object_id: int, lat: float, lon: float) -> None:
+    with SessionLocal() as session:
+        row = session.get(ReceivingPoint, object_id)
+        if not row:
+            return
+        row.lat = lat
+        row.lon = lon
+        session.commit()
