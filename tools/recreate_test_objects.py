@@ -17,33 +17,59 @@ def post(path: str, payload: dict) -> dict:
 
 
 def main() -> None:
-    burt = post(
+    optimal_burt = post(
         "/objects/burts",
         {
-            "crm_id": "test-burt-3",
-            "name": "Тестовый бурт",
-            "address": "Москва, Тверская улица, 1",
-            "lat": 55.7666517,
-            "lon": 37.6028524,
-            "category": "test",
-            "quality": "A",
-            "volume": 10,
-            "status": "new",
+            "crm_id": "demo-optimal-burt-1",
+            "name": "Демо бурт для оптимального маршрута",
+            "address": "Москва, 1-я Тверская-Ямская улица, 7",
+            "lat": 55.771056,
+            "lon": 37.595092,
+            "category": "Пшеница",
+            "quality": "3 класс",
+            "volume": 1200,
+            "status": "активен",
         },
     )
-    point = post(
+    optimal_point = post(
         "/objects/receiving-points",
         {
-            "crm_id": "test-rp-3",
-            "name": "Тестовая точка приемки",
-            "address": "Москва, Ленинградский проспект, 37",
-            "lat": 55.7922525,
-            "lon": 37.5408443,
-            "point_type": "test",
+            "crm_id": "demo-optimal-point-1",
+            "name": "Демо точка приемки рядом",
+            "address": "Москва, Ленинградский проспект, 11",
+            "lat": 55.782054,
+            "lon": 37.576457,
+            "point_type": "элеватор",
+        },
+    )
+    fallback_point = post(
+        "/objects/receiving-points",
+        {
+            "crm_id": "demo-optimal-point-far-1",
+            "name": "Демо точка приемки далеко",
+            "address": "Москва, Каширское шоссе, 61к3А",
+            "lat": 55.621216,
+            "lon": 37.712381,
+            "point_type": "элеватор",
         },
     )
 
-    print(json.dumps({"burt": burt, "receiving_point": point}, ensure_ascii=False, indent=2))
+    print(
+        json.dumps(
+            {
+                "optimal_burt": optimal_burt,
+                "optimal_receiving_point": optimal_point,
+                "fallback_receiving_point": fallback_point,
+                "how_to_test": {
+                    "source_type": "burt",
+                    "source_id": optimal_burt["id"],
+                    "expected_best_target_id": optimal_point["id"],
+                },
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
 
 
 if __name__ == "__main__":

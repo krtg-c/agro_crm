@@ -5,6 +5,10 @@ class OSRMClient:
     def __init__(self, base_url: str):
         self.base_url = base_url.rstrip("/")
 
+    def route_distance_km(self, from_lat: float, from_lon: float, to_lat: float, to_lon: float) -> float:
+        route = self.route_full(from_lat, from_lon, to_lat, to_lon)
+        return route["distance_km"]
+
     def route_full(self, from_lat: float, from_lon: float, to_lat: float, to_lon: float) -> dict:
         url = (
             f"{self.base_url}/route/v1/driving/"

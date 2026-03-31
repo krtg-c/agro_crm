@@ -124,6 +124,10 @@ button:disabled {
     linear-gradient(180deg, #ffffff, #f8fbff);
 }
 
+.panel-route .selection-card {
+  margin-bottom: 14px;
+}
+
 .panel-form {
   background:
     linear-gradient(140deg, rgba(180, 83, 9, 0.08), transparent 45%),
@@ -239,6 +243,14 @@ button:disabled {
 
 .toolbar-grid {
   grid-template-columns: 120px 1fr;
+}
+
+.toolbar-grid-wide {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.toolbar-grid-floating {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .field {
@@ -395,6 +407,18 @@ button:disabled {
   overflow: hidden;
 }
 
+.panel-filters-floating {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 1100;
+  width: min(460px, calc(100% - 36px));
+  max-height: calc(100vh - 36px);
+  overflow: auto;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(16px);
+}
+
 .map-badge {
   position: absolute;
   right: 14px;
@@ -454,6 +478,13 @@ button:disabled {
     min-height: 70vh;
     height: 70vh;
   }
+
+  .panel-filters-floating {
+    position: static;
+    width: 100%;
+    max-height: none;
+    margin: 14px 14px 0;
+  }
 }
 
 @media (max-width: 640px) {
@@ -467,6 +498,8 @@ button:disabled {
   }
 
   .toolbar-grid,
+  .toolbar-grid-wide,
+  .toolbar-grid-floating,
   .stats-grid,
   .field-row,
   .route-result,
